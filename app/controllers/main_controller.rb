@@ -25,7 +25,18 @@ class MainController < UIViewController
   def webView(webView, didFailLoadWithError: error)
     url = error.userInfo.objectForKey(NSURLErrorFailingURLStringErrorKey)
     code = url.split("?").last.split("&").map { |pair| pair.split("=") }.detect {|pair| pair.first == "code" }.last
-    puts code
+
+    AFMotion::JSON.post(
+      'https://cloud.feedly.com/v3/auth/token',
+      client_id: 'feedly',
+      client_secret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
+      grant_type: 'authorization_code',
+      redirect_uri: 'http://www.feedly.com/feedly.html',
+      code: code
+    ) do |result|
+      puts result.object["access_token"]
+      puts result.body
+    end
   end
 
   def init_nav

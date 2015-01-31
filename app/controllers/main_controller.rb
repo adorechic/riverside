@@ -10,14 +10,41 @@ class MainController < UIViewController
     init_nav
     rmq(self.view).apply_style :root_view
 
+    auth_endpoint = 'https://cloud.feedly.com/v3/auth/auth?client_id=feedly&redirect_uri=http://localhost&scope=https://cloud.feedly.com/subscriptions&response_type=code&provider=google&migrate=false'
     @webview = UIWebView.new.tap do |v|
       v.frame = self.view.bounds
       v.scalesPageToFit = true
       v.loadRequest(
-        NSURLRequest.requestWithURL(NSURL.URLWithString('http://google.com'))
+        NSURLRequest.requestWithURL(NSURL.URLWithString(auth_endpoint))
       )
       v.delegate = self
       view.addSubview(v)
+    end
+  end
+
+  def webView(webView, didFailLoadWithError: error)
+    url = error.userInfo.objectForKey(NSURLErrorFailingURLStringErrorKey)
+    code = url.split("?").last.split("&").map { |pair| pair.split("=") }.detect {|pair| pair.first == "code" }.last
+
+    AFMotion::JSON.post(
+      'https://cloud.feedly.com/v3/auth/token',
+      client_id: 'feedly',
+      client_secret: '0XP4XQ07VVMDWBKUHTJM4WUQ',
+      grant_type: 'authorization_code',
+      redirect_uri: 'http://www.feedly.com/feedly.html',
+      code: code
+    ) do |result|
+      access_token = result.object["access_token"]
+
+      client = AFMotion::Client.build("https://cloud.feedly.com/") do
+        header "Accept", "application/json"
+        header "Authorization", "OAuth #{access_token}"
+        response_serializer :json
+      end
+
+      client.get('/v3/profile') do |result|
+        puts result.body
+      end
     end
   end
 

@@ -10,8 +10,15 @@ class MainController < UIViewController
     init_nav
     rmq(self.view).apply_style :root_view
 
-    # Create your UIViews here
-    @hello_world_label = rmq.append!(UILabel, :hello_world)
+    @webview = UIWebView.new.tap do |v|
+      v.frame = self.view.bounds
+      v.scalesPageToFit = true
+      v.loadRequest(
+        NSURLRequest.requestWithURL(NSURL.URLWithString('http://google.com'))
+      )
+      v.delegate = self
+      view.addSubview(v)
+    end
   end
 
   def init_nav
@@ -68,5 +75,3 @@ end
 
 # Then in willAnimateRotationToInterfaceOrientation
 rmq(:reapply_style).reapply_styles
-
-

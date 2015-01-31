@@ -34,8 +34,17 @@ class MainController < UIViewController
       redirect_uri: 'http://www.feedly.com/feedly.html',
       code: code
     ) do |result|
-      puts result.object["access_token"]
-      puts result.body
+      access_token = result.object["access_token"]
+
+      client = AFMotion::Client.build("https://cloud.feedly.com/") do
+        header "Accept", "application/json"
+        header "Authorization", "OAuth #{access_token}"
+        response_serializer :json
+      end
+
+      client.get('/v3/profile') do |result|
+        puts result.body
+      end
     end
   end
 

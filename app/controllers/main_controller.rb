@@ -10,15 +10,22 @@ class MainController < UIViewController
     init_nav
     rmq(self.view).apply_style :root_view
 
+    auth_endpoint = 'https://cloud.feedly.com/v3/auth/auth?client_id=feedly&redirect_uri=http://localhost&scope=https://cloud.feedly.com/subscriptions&response_type=code&provider=google&migrate=false'
     @webview = UIWebView.new.tap do |v|
       v.frame = self.view.bounds
       v.scalesPageToFit = true
       v.loadRequest(
-        NSURLRequest.requestWithURL(NSURL.URLWithString('http://google.com'))
+        NSURLRequest.requestWithURL(NSURL.URLWithString(auth_endpoint))
       )
       v.delegate = self
       view.addSubview(v)
     end
+  end
+
+  def webView(webView, didFailLoadWithError: error)
+    url = error.userInfo.objectForKey(NSURLErrorFailingURLStringErrorKey)
+    code = url.split("?").last.split("&").map { |pair| pair.split("=") }.detect {|pair| pair.first == "code" }.last
+    puts code
   end
 
   def init_nav

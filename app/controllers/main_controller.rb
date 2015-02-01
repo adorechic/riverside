@@ -93,10 +93,20 @@ class MainController < UIViewController
 
   def tableView(tableView, cellForRowAtIndexPath: indexPath)
     @reuseIdentifier ||= "CELL_IDENTIFIER"
-    cell = tableView.dequeueReusableCellWithIdentifier(@reuseIdentifier) || begin
-                                                                              UITableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier: @reuseIdentifier)
-                                                                            end
-    cell.textLabel.text = @data[indexPath.row]["name"]
+    cell = tableView.dequeueReusableCellWithIdentifier(@reuseIdentifier) ||
+           TDBadgedCell.alloc.initWithStyle(
+             UITableViewCellStyleDefault, reuseIdentifier: @reuseIdentifier
+           )
+
+    item = @data[indexPath.row]
+    cell.textLabel.text = item["name"]
+    count = item["count"]
+    if count.to_i == 0
+      cell.badgeString = nil
+    else
+      cell.badgeString = count.to_s
+    end
+
     cell
   end
 

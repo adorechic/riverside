@@ -43,7 +43,13 @@ class MainController < UIViewController
       end
 
       rmq(self.view).apply_style :root_view
-      @hello_world_label = rmq.append!(UILabel, :hello_world)
+
+      @table = UITableView.alloc.initWithFrame(self.view.bounds)
+      @table.dataSource = self
+      @table.contentInset = [0, 0, 0, 0]
+      @data = %w(aaa bbb ccc)
+      self.navigationController.navigationBar.translucent = false
+      self.view.addSubview @table
     end
   end
 
@@ -64,6 +70,19 @@ class MainController < UIViewController
 
   def nav_right_button
     puts 'Right button'
+  end
+
+  def tableView(tableView, cellForRowAtIndexPath: indexPath)
+    @reuseIdentifier ||= "CELL_IDENTIFIER"
+    cell = tableView.dequeueReusableCellWithIdentifier(@reuseIdentifier) || begin
+                                                                              UITableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier: @reuseIdentifier)
+                                                                            end
+    cell.textLabel.text = @data[indexPath.row]
+    cell
+  end
+
+  def tableView(tableView, numberOfRowsInSection: section)
+    @data.count
   end
 
   # Remove these if you are only supporting portrait

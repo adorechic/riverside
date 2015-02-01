@@ -20,11 +20,14 @@ PODS:
   - AFNetworking/UIKit (2.5.0):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
+  - TDBadgedCell (2.6)
 
 DEPENDENCIES:
   - AFNetworking (~> 2.5)
+  - TDBadgedCell
 
 SPEC CHECKSUMS:
   AFNetworking: 0f54cb5d16ce38c1b76948faffb8d5fb705021c7
+  TDBadgedCell: e683b5557d12ea4e28a8d6ac20b6e394abc2c1fe
 
 COCOAPODS: 0.35.0

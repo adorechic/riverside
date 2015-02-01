@@ -42,8 +42,30 @@ class MainController < UIViewController
         response_serializer :json
       end
 
-      client.get('/v3/profile') do |result|
-        puts result.body
+      rmq(self.view).apply_style :root_view
+
+      show_categories = -> (data) {
+        @data = data
+
+        @table = UITableView.alloc.initWithFrame(self.view.bounds)
+        @table.dataSource = self
+        @table.contentInset = [0, 0, 0, 0]
+
+        self.navigationController.navigationBar.translucent = false
+        self.view.addSubview @table
+      }
+
+      client.get('/v3/markers/counts') do |result|
+        categories = result.object["unreadcounts"].select do |item|
+          item["id"].start_with?("user/")
+        end
+
+        data = categories.map do |item|
+          item["name"] = item["id"].split('/').last
+          item
+        end
+
+        show_categories.call(data)
       end
     end
   end
@@ -65,6 +87,29 @@ class MainController < UIViewController
 
   def nav_right_button
     puts 'Right button'
+  end
+
+  def tableView(tableView, cellForRowAtIndexPath: indexPath)
+    @reuseIdentifier ||= "CELL_IDENTIFIER"
+    cell = tableView.dequeueReusableCellWithIdentifier(@reuseIdentifier) ||
+           TDBadgedCell.alloc.initWithStyle(
+             UITableViewCellStyleDefault, reuseIdentifier: @reuseIdentifier
+           )
+
+    item = @data[indexPath.row]
+    cell.textLabel.text = item["name"]
+    count = item["count"]
+    if count.to_i == 0
+      cell.badgeString = nil
+    else
+      cell.badgeString = count.to_s
+    end
+
+    cell
+  end
+
+  def tableView(tableView, numberOfRowsInSection: section)
+    @data.count
   end
 
   # Remove these if you are only supporting portrait

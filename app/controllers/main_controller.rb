@@ -44,12 +44,31 @@ class MainController < UIViewController
 
       rmq(self.view).apply_style :root_view
 
-      @table = UITableView.alloc.initWithFrame(self.view.bounds)
-      @table.dataSource = self
-      @table.contentInset = [0, 0, 0, 0]
-      @data = %w(aaa bbb ccc)
-      self.navigationController.navigationBar.translucent = false
-      self.view.addSubview @table
+      show_categories = -> (data) {
+        @data = data
+        puts @data
+
+        @table = UITableView.alloc.initWithFrame(self.view.bounds)
+        @table.dataSource = self
+        @table.contentInset = [0, 0, 0, 0]
+
+        self.navigationController.navigationBar.translucent = false
+        self.view.addSubview @table
+
+      }
+
+      client.get('/v3/markers/counts') do |result|
+        categories = result.object["unreadcounts"].select do |item|
+          item["id"].start_with?("user/")
+        end
+
+        data = categories.map do |item|
+          item["name"] = item["id"].split('/').last
+          item
+        end
+
+        show_categories.call(data)
+      end
     end
   end
 
@@ -77,7 +96,7 @@ class MainController < UIViewController
     cell = tableView.dequeueReusableCellWithIdentifier(@reuseIdentifier) || begin
                                                                               UITableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier: @reuseIdentifier)
                                                                             end
-    cell.textLabel.text = @data[indexPath.row]
+    cell.textLabel.text = @data[indexPath.row]["name"]
     cell
   end
 

@@ -46,7 +46,6 @@ class MainController < UIViewController
 
       show_categories = -> (data) {
         @data = data
-        puts @data
 
         @table = UITableView.alloc.initWithFrame(self.view.bounds)
         @table.dataSource = self
@@ -54,7 +53,6 @@ class MainController < UIViewController
 
         self.navigationController.navigationBar.translucent = false
         self.view.addSubview @table
-
       }
 
       client.get('/v3/markers/counts') do |result|

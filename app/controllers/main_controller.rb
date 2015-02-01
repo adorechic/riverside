@@ -45,6 +45,9 @@ class MainController < UIViewController
       client.get('/v3/profile') do |result|
         puts result.body
       end
+
+      rmq(self.view).apply_style :root_view
+      @hello_world_label = rmq.append!(UILabel, :hello_world)
     end
   end
 

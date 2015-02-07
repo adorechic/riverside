@@ -125,7 +125,7 @@ class MainController < UIViewController
 
     feeds_controller = FeedsController.new
     feeds_controller.category_controller = self
-    feeds_controller.category_name = item["name"]
+    feeds_controller.category = item
     controller = UINavigationController.alloc.initWithRootViewController(
       feeds_controller
     )

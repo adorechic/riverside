@@ -44,18 +44,6 @@ class MainController < UIViewController
 
       rmq(self.view).apply_style :root_view
 
-      show_categories = -> (data) {
-        @data = data
-
-        @table = UITableView.alloc.initWithFrame(self.view.bounds)
-        @table.dataSource = self
-        @table.contentInset = [0, 0, 0, 0]
-        @table.delegate = self
-
-        self.navigationController.navigationBar.translucent = false
-        self.view.addSubview @table
-      }
-
       client.get('/v3/markers/counts') do |result|
         categories = result.object["unreadcounts"].select do |item|
           item["id"].start_with?("user/")
@@ -66,9 +54,21 @@ class MainController < UIViewController
           item
         end
 
-        show_categories.call(data)
+        show_categories(data)
       end
     end
+  end
+
+  def show_categories(data)
+    @data = data
+
+    @table = UITableView.alloc.initWithFrame(self.view.bounds)
+    @table.dataSource = self
+    @table.contentInset = [0, 0, 0, 0]
+    @table.delegate = self
+
+    self.navigationController.navigationBar.translucent = false
+    self.view.addSubview @table
   end
 
   def init_nav

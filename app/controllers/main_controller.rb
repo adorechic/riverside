@@ -42,20 +42,24 @@ class MainController < UIViewController
         response_serializer :json
       end
 
-      rmq(self.view).apply_style :root_view
+      load_categories(client)
+    end
+  end
 
-      client.get('/v3/markers/counts') do |result|
-        categories = result.object["unreadcounts"].select do |item|
-          item["id"].start_with?("user/")
-        end
+  def load_categories(client)
+    rmq(self.view).apply_style :root_view
 
-        data = categories.map do |item|
-          item["name"] = item["id"].split('/').last
-          item
-        end
-
-        show_categories(data)
+    client.get('/v3/markers/counts') do |result|
+      categories = result.object["unreadcounts"].select do |item|
+        item["id"].start_with?("user/")
       end
+
+      data = categories.map do |item|
+        item["name"] = item["id"].split('/').last
+        item
+      end
+
+      show_categories(data)
     end
   end
 

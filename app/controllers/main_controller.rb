@@ -1,4 +1,5 @@
 class MainController < UIViewController
+  attr_accessor :access_token
 
   def viewDidLoad
     super
@@ -34,19 +35,21 @@ class MainController < UIViewController
       redirect_uri: 'http://www.feedly.com/feedly.html',
       code: code
     ) do |result|
-      access_token = result.object["access_token"]
-
-      client = AFMotion::Client.build("https://cloud.feedly.com/") do
-        header "Accept", "application/json"
-        header "Authorization", "OAuth #{access_token}"
-        response_serializer :json
-      end
-
-      load_categories(client)
+      self.access_token = result.object["access_token"]
+      load_categories
     end
   end
 
-  def load_categories(client)
+  def client
+    token = access_token
+    @client ||= AFMotion::Client.build("https://cloud.feedly.com/") do
+      header "Accept", "application/json"
+      header "Authorization", "OAuth #{token}"
+      response_serializer :json
+    end
+  end
+
+  def load_categories
     rmq(self.view).apply_style :root_view
 
     client.get('/v3/markers/counts') do |result|

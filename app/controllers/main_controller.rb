@@ -1,4 +1,5 @@
 class MainController < UIViewController
+  attr_accessor :access_token
 
   def viewDidLoad
     super
@@ -34,40 +35,47 @@ class MainController < UIViewController
       redirect_uri: 'http://www.feedly.com/feedly.html',
       code: code
     ) do |result|
-      access_token = result.object["access_token"]
-
-      client = AFMotion::Client.build("https://cloud.feedly.com/") do
-        header "Accept", "application/json"
-        header "Authorization", "OAuth #{access_token}"
-        response_serializer :json
-      end
-
-      rmq(self.view).apply_style :root_view
-
-      show_categories = -> (data) {
-        @data = data
-
-        @table = UITableView.alloc.initWithFrame(self.view.bounds)
-        @table.dataSource = self
-        @table.contentInset = [0, 0, 0, 0]
-
-        self.navigationController.navigationBar.translucent = false
-        self.view.addSubview @table
-      }
-
-      client.get('/v3/markers/counts') do |result|
-        categories = result.object["unreadcounts"].select do |item|
-          item["id"].start_with?("user/")
-        end
-
-        data = categories.map do |item|
-          item["name"] = item["id"].split('/').last
-          item
-        end
-
-        show_categories.call(data)
-      end
+      self.access_token = result.object["access_token"]
+      load_categories
     end
+  end
+
+  def client
+    token = access_token
+    @client ||= AFMotion::Client.build("https://cloud.feedly.com/") do
+      header "Accept", "application/json"
+      header "Authorization", "OAuth #{token}"
+      response_serializer :json
+    end
+  end
+
+  def load_categories
+    rmq(self.view).apply_style :root_view
+
+    client.get('/v3/markers/counts') do |result|
+      categories = result.object["unreadcounts"].select do |item|
+        item["id"].start_with?("user/")
+      end
+
+      data = categories.map do |item|
+        item["name"] = item["id"].split('/').last
+        item
+      end
+
+      show_categories(data)
+    end
+  end
+
+  def show_categories(data)
+    @data = data
+
+    @table = UITableView.alloc.initWithFrame(self.view.bounds)
+    @table.dataSource = self
+    @table.contentInset = [0, 0, 0, 0]
+    @table.delegate = self
+
+    self.navigationController.navigationBar.translucent = false
+    self.view.addSubview @table
   end
 
   def init_nav
@@ -110,6 +118,19 @@ class MainController < UIViewController
 
   def tableView(tableView, numberOfRowsInSection: section)
     @data.count
+  end
+
+  def tableView(tableView, didSelectRowAtIndexPath: indexPath)
+    item = @data[indexPath.row]
+
+    feeds_controller = FeedsController.new
+    feeds_controller.category_controller = self
+    feeds_controller.category = item
+    controller = UINavigationController.alloc.initWithRootViewController(
+      feeds_controller
+    )
+    controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal
+    self.presentViewController(controller, animated: true, completion: nil)
   end
 
   # Remove these if you are only supporting portrait

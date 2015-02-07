@@ -50,6 +50,7 @@ class MainController < UIViewController
         @table = UITableView.alloc.initWithFrame(self.view.bounds)
         @table.dataSource = self
         @table.contentInset = [0, 0, 0, 0]
+        @table.delegate = self
 
         self.navigationController.navigationBar.translucent = false
         self.view.addSubview @table
@@ -110,6 +111,19 @@ class MainController < UIViewController
 
   def tableView(tableView, numberOfRowsInSection: section)
     @data.count
+  end
+
+  def tableView(tableView, didSelectRowAtIndexPath: indexPath)
+    item = @data[indexPath.row]
+
+    feeds_controller = FeedsController.new
+    feeds_controller.category_controller = self
+    feeds_controller.category_name = item["name"]
+    controller = UINavigationController.alloc.initWithRootViewController(
+      feeds_controller
+    )
+    controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal
+    self.presentViewController(controller, animated: true, completion: nil)
   end
 
   # Remove these if you are only supporting portrait

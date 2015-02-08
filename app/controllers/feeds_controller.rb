@@ -60,4 +60,8 @@ class FeedsController < UIViewController
   def tableView(tableView, numberOfRowsInSection: section)
     @titles.count
   end
+
+  def tableView(tableView, didEndDisplayingCell: cell, forRowAtIndexPath: indexPath)
+    puts "Removed #{indexPath.row}"
+  end
 end

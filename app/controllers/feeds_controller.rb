@@ -52,9 +52,11 @@ class FeedsController < UIViewController
     item = @feedly_items[indexPath.row]
     cell.textLabel.text = item["title"]
     cell.textLabel.numberOfLines = 0
+    cell.textLabel.font = UIFont.boldSystemFontOfSize(18)
     summary = item["summary"]
     cell.detailTextLabel.text = summary ? summary["content"] : ""
     cell.detailTextLabel.numberOfLines = 1
+    cell.detailTextLabel.textColor = UIColor.grayColor
     cell
   end
 

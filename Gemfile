@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 gem 'rake'
 gem 'ruby_motion_query'
 gem 'afmotion'
+gem 'dotenv'
 
 # Pretty printing
 #gem 'motion_print'

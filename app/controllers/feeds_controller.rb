@@ -67,4 +67,18 @@ class FeedsController < UIViewController
   def tableView(tableView, didEndDisplayingCell: cell, forRowAtIndexPath: indexPath)
     puts "Removed #{indexPath.row}"
   end
+
+  def tableView(tableView, didSelectRowAtIndexPath: indexPath)
+    item = @feedly_items[indexPath.row]
+
+    entries_controller = EntriesController.new
+    entries_controller.feeds_controller = self
+    entries_controller.entry = item
+    controller = UINavigationController.alloc.initWithRootViewController(
+      entries_controller
+    )
+    controller.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal
+    self.presentViewController(controller, animated: true, completion: nil)
+  end
+
 end

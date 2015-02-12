@@ -35,9 +35,25 @@ class EntriesController < UIViewController
         target: self, action: :nav_left_button
       )
     end
+
+    self.navigationController.setToolbarHidden(false, animated: false)
+    spacer = UIBarButtonItem.alloc.initWithBarButtonSystemItem(
+      UIBarButtonSystemItemFlexibleSpace,
+      target: nil, action: nil
+    )
+
+    button = UIBarButtonItem.alloc.initWithBarButtonSystemItem(
+      UIBarButtonSystemItemAction,
+      target: self,
+      action: :share
+    )
+    self.toolbarItems = [spacer, button]
   end
 
   def nav_left_button
     self.dismissViewControllerAnimated(true, completion: nil)
+  end
+
+  def share
   end
 end

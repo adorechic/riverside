@@ -45,7 +45,7 @@ class EntriesController < UIViewController
     button = UIBarButtonItem.alloc.initWithBarButtonSystemItem(
       UIBarButtonSystemItemAction,
       target: self,
-      action: :share
+      action: :open_share_action
     )
     self.toolbarItems = [spacer, button]
   end
@@ -54,6 +54,21 @@ class EntriesController < UIViewController
     self.dismissViewControllerAnimated(true, completion: nil)
   end
 
-  def share
+  def open_share_action
+    ac = UIAlertController.alertControllerWithTitle(
+      "Title",
+      message: "Message",
+      preferredStyle: UIAlertControllerStyleActionSheet
+    )
+    act = UIAlertAction.actionWithTitle(
+      "OK",
+      style: UIAlertActionStyleDefault,
+      handler: -> (action) {
+        puts "OK!!!!!!!!!!!!!!!!"
+      }
+    )
+    ac.addAction(act)
+
+    self.presentViewController(ac, animated: true, completion: nil)
   end
 end

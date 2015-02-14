@@ -61,14 +61,22 @@ class EntriesController < UIViewController
       preferredStyle: UIAlertControllerStyleActionSheet
     )
     act = UIAlertAction.actionWithTitle(
-      "OK",
+      "Pocket",
       style: UIAlertActionStyleDefault,
       handler: -> (action) {
-        puts "OK!!!!!!!!!!!!!!!!"
+        pocket_entry
       }
     )
     ac.addAction(act)
 
     self.presentViewController(ac, animated: true, completion: nil)
+  end
+
+  def pocket_entry
+    pocket_controller = PocketAuthenticationController.new
+    controller = UINavigationController.alloc.initWithRootViewController(
+      pocket_controller
+    )
+    self.presentViewController(controller, animated: true, completion: nil)
   end
 end

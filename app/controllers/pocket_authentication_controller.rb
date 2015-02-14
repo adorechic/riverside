@@ -13,7 +13,7 @@ class PocketAuthenticationController < UIViewController
       consumer_key: POCKET_CONSUMER_KEY,
       redirect_uri: 'http://localhost'
     ) do |result|
-      code = result.body.split("=").last
+      code = result.object["code"]
       open_permit_page(code)
     end
   end
@@ -21,7 +21,10 @@ class PocketAuthenticationController < UIViewController
   def client
     @client ||= AFMotion::Client.build("https://getpocket.com") do
       request_serializer :json
-      response_serializer :form
+      response_serializer :json
+
+      header "Content-Type", "application/json; charset=UTF-8"
+      header "X-Accept", "application/json"
     end
   end
 
@@ -49,9 +52,7 @@ class PocketAuthenticationController < UIViewController
       consumer_key: POCKET_CONSUMER_KEY,
       code: @code
     ) do |result|
-      access_token = result.body.split("&").
-        map { |kv| kv.split("=") }.
-        detect { |kv| kv.first == "access_token" }.last
+      access_token = result.object["access_token"]
 
       puts "!!!! GET ACCESS TOKEN !!!!!"
       puts access_token

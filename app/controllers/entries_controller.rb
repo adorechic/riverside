@@ -74,6 +74,8 @@ class EntriesController < UIViewController
 
   def pocket_entry
     pocket_controller = PocketAuthenticationController.new
+    pocket_controller.entry = entry
+
     controller = UINavigationController.alloc.initWithRootViewController(
       pocket_controller
     )

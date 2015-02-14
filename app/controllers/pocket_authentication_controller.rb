@@ -1,4 +1,6 @@
 class PocketAuthenticationController < UIViewController
+  attr_accessor :entry
+
   POCKET_CONSUMER_KEY = ENV['POCKET_CONSUMER_KEY']
 
   def viewDidLoad
@@ -53,9 +55,21 @@ class PocketAuthenticationController < UIViewController
       code: @code
     ) do |result|
       access_token = result.object["access_token"]
+      add_item(access_token)
+    end
+  end
 
-      puts "!!!! GET ACCESS TOKEN !!!!!"
-      puts access_token
+  def add_item(access_token)
+    client.post(
+      '/v3/add',
+      url: entry['alternate'].first['href'],
+      title: entry['title'],
+      consumer_key: POCKET_CONSUMER_KEY,
+      access_token: access_token
+    ) do |result|
+      # TODO
+      puts result.body
+      self.dismissViewControllerAnimated(true, completion: nil)
     end
   end
 end

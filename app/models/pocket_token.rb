@@ -1,0 +1,3 @@
+class PocketToken < CDQManagedObject
+
+end

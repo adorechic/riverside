@@ -54,18 +54,20 @@ class PocketAuthenticationController < UIViewController
       consumer_key: POCKET_CONSUMER_KEY,
       code: @code
     ) do |result|
-      access_token = result.object["access_token"]
-      add_item(access_token)
+      pocket_token = PocketToken.first || PocketToken.create
+      pocket_token.access_token = result.object["access_token"]
+      cdq.save
+      add_item
     end
   end
 
-  def add_item(access_token)
+  def add_item
     client.post(
       '/v3/add',
       url: entry['alternate'].first['href'],
       title: entry['title'],
       consumer_key: POCKET_CONSUMER_KEY,
-      access_token: access_token
+      access_token: PocketToken.first.access_token
     ) do |result|
       # TODO
       puts result.body

@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>_XCCurrentVersionName</key>
-	<string>001_create_FeedlyToken.xcdatamodel</string>
+	<string>002_create_PocketToken.xcdatamodel</string>
 </dict>
 </plist>

@@ -1,0 +1,3 @@
+class FeedlyToken < CDQManagedObject
+
+end

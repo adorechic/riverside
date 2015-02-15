@@ -4,6 +4,11 @@ gem 'rake'
 gem 'ruby_motion_query'
 gem 'afmotion'
 gem 'dotenv'
+gem 'cdq'
+
+# cocoapods 0.36 requires ActiveSupport 4, but cdq 0.1.11 requires ActiveSupport 3.2
+# So fix the version of cocoapods
+gem 'cocoapods', '0.35'
 
 # Pretty printing
 #gem 'motion_print'
@@ -17,9 +22,6 @@ gem 'dotenv'
 
 # For beta distribution a exception reporting
 #gem 'motion-hockeyapp'
-
-# If you're using Core Data, this is recommended
-#gem 'cdq'
 
 # Useful tools
 #gem 'bubble-wrap'

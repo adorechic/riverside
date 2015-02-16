@@ -73,12 +73,20 @@ class EntriesController < UIViewController
   end
 
   def pocket_entry
-    pocket_controller = PocketAuthenticationController.new
-    pocket_controller.entry = entry
+    pocket_token = PocketToken.first
+    if pocket_token
+      pocket_token.add_entry(
+        url: entry['alternate'].first['href'],
+        title: entry['title']
+      )
+    else
+      pocket_controller = PocketAuthenticationController.new
+      pocket_controller.entry = entry
 
-    controller = UINavigationController.alloc.initWithRootViewController(
-      pocket_controller
-    )
-    self.presentViewController(controller, animated: true, completion: nil)
+      controller = UINavigationController.alloc.initWithRootViewController(
+        pocket_controller
+      )
+      self.presentViewController(controller, animated: true, completion: nil)
+    end
   end
 end

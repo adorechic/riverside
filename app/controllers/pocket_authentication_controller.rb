@@ -10,23 +10,13 @@ class PocketAuthenticationController < UIViewController
     init_nav
     rmq(self.view).apply_style :root_view
 
-    client.post(
+    PocketToken.client.post(
       'https://getpocket.com/v3/oauth/request',
       consumer_key: POCKET_CONSUMER_KEY,
       redirect_uri: 'http://localhost'
     ) do |result|
       code = result.object["code"]
       open_permit_page(code)
-    end
-  end
-
-  def client
-    @client ||= AFMotion::Client.build("https://getpocket.com") do
-      request_serializer :json
-      response_serializer :json
-
-      header "Content-Type", "application/json; charset=UTF-8"
-      header "X-Accept", "application/json"
     end
   end
 
@@ -49,7 +39,7 @@ class PocketAuthenticationController < UIViewController
   end
 
   def webView(webView, didFailLoadWithError: error)
-    client.post(
+    PocketToken.client.post(
       'https://getpocket.com/v3/oauth/authorize',
       consumer_key: POCKET_CONSUMER_KEY,
       code: @code
@@ -57,21 +47,15 @@ class PocketAuthenticationController < UIViewController
       pocket_token = PocketToken.first || PocketToken.create
       pocket_token.access_token = result.object["access_token"]
       cdq.save
-      add_item
+      add_item(entry)
     end
   end
 
-  def add_item
-    client.post(
-      '/v3/add',
+  def add_item(entry)
+    PocketToken.first.add_entry(
       url: entry['alternate'].first['href'],
-      title: entry['title'],
-      consumer_key: POCKET_CONSUMER_KEY,
-      access_token: PocketToken.first.access_token
-    ) do |result|
-      # TODO
-      puts result.body
-      self.dismissViewControllerAnimated(true, completion: nil)
-    end
+      title: entry['title']
+    )
+    self.dismissViewControllerAnimated(true, completion: nil)
   end
 end

@@ -60,14 +60,25 @@ class EntriesController < UIViewController
       message: "Message",
       preferredStyle: UIAlertControllerStyleActionSheet
     )
-    act = UIAlertAction.actionWithTitle(
-      "Pocket",
-      style: UIAlertActionStyleDefault,
-      handler: -> (action) {
-        pocket_entry
-      }
+
+    ac.addAction(
+      UIAlertAction.actionWithTitle(
+        "Pocket",
+        style: UIAlertActionStyleDefault,
+        handler: -> (action) {
+          pocket_entry
+        }
+      )
     )
-    ac.addAction(act)
+    ac.addAction(
+      UIAlertAction.actionWithTitle(
+        "Pinboard",
+        style: UIAlertActionStyleDefault,
+        handler: -> (action) {
+          open_pinboard_controller
+        }
+      )
+    )
 
     self.presentViewController(ac, animated: true, completion: nil)
   end
@@ -88,5 +99,8 @@ class EntriesController < UIViewController
       )
       self.presentViewController(controller, animated: true, completion: nil)
     end
+  end
+
+  def open_pinboard_controller
   end
 end

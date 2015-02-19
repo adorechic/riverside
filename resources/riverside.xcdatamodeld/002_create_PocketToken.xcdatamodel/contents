@@ -7,4 +7,7 @@
   <entity name="PocketToken" syncable="YES" representedClassName="PocketToken">
     <attribute optional="NO" syncable="YES" attributeType="String" name="access_token"/>
   </entity>
+  <entity name="PinboardToken" syncable="YES" representedClassName="PinboardToken">
+    <attribute optional="NO" syncable="YES" attributeType="String" name="auth_token"/>
+  </entity>
 </model>

@@ -1,0 +1,3 @@
+class PinboardToken < CDQManagedObject
+
+end

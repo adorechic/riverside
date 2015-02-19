@@ -19,6 +19,16 @@ class PinboardAuthenticationController < UIViewController
   end
 
   def authenticate
-    puts "Authenticate!"
+    AFMotion::JSON.get(
+      'https://api.pinboard.in/v1/user/api_token/',
+      format: 'json',
+      auth_token: @api_token.text
+    ) do |result|
+      if result.success?
+        pinboard_token = PinboardToken.first || PinboardToken.create
+        pinboard_token.auth_token = result.object["result"]
+        cdq.save
+      end
+    end
   end
 end

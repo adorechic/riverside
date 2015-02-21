@@ -19,18 +19,48 @@ class PinboardAuthenticationController < UIViewController
   end
 
   def authenticate
-    AFMotion::JSON.get(
-      'https://api.pinboard.in/v1/user/api_token/',
-      format: 'json',
+    AFMotion::Client.build('https://api.pinboard.in/') {
+      response_serializer :xml
+    }.get(
+      'v1/user/api_token/',
       auth_token: @api_token.text
     ) do |result|
       if result.success?
+        parser = result.object
+        parser.delegate = self
+        parser.parse
+
+        unless @result == @api_token.text.split(':').last
+          raise "Invalid"
+        end
+
         pinboard_token = PinboardToken.first || PinboardToken.create
-        pinboard_token.auth_token = result.object["result"]
+        pinboard_token.auth_token = @api_token.text
         cdq.save
         callback_to_pinboard_controller
+      else
+        # TODO
+        puts result.status_code
+        puts result.error.localizedDescription
+        puts result.body
       end
     end
+  end
+
+  def parser(parser, didStartElement: element_name, namespaceURI: uri, qualifiedName: qname, attributes: attributes)
+    if element_name == 'result'
+      @target_element = true
+    end
+  end
+
+  def parser(parser, foundCharacters: string)
+    if @target_element
+      @result = string
+    end
+  end
+
+  def parser(parser, didEndElement: element_name, namespaceURI: uri, qualifiedName: qname)
+    @target_element = false
   end
 
   def callback_to_pinboard_controller

@@ -28,8 +28,12 @@ class PinboardAuthenticationController < UIViewController
         pinboard_token = PinboardToken.first || PinboardToken.create
         pinboard_token.auth_token = result.object["result"]
         cdq.save
-        self.dismissViewControllerAnimated(true, completion: nil)
+        callback_to_pinboard_controller
       end
     end
+  end
+
+  def callback_to_pinboard_controller
+    self.dismissViewControllerAnimated(true, completion: nil)
   end
 end

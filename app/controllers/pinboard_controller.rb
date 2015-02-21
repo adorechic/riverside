@@ -6,7 +6,9 @@ class PinboardController < UIViewController
     init_nav
     rmq(self.view).apply_style :root_view
 
-    open_pinboard_authentication_controller
+    unless PinboardToken.first
+      open_pinboard_authentication_controller
+    end
   end
 
   def init_nav

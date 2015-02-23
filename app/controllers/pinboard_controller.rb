@@ -45,6 +45,25 @@ class PinboardController < UIViewController
   end
 
   def add_pinboard
-    puts "Add!"
+    AFMotion::XML.get(
+      'https://api.pinboard.in/v1/posts/add',
+      url: @url.text,
+      description: @title.text,
+      tags: @tag.text,
+      auth_token: PinboardToken.first.auth_token
+    ) do |result|
+      unless result.success?
+        # TODO
+        puts result.status_code
+        puts result.error.localizedDescription
+        puts result.body
+      end
+
+      callback_to_entry
+    end
+  end
+
+  def callback_to_entry
+    self.dismissViewControllerAnimated(true, completion: nil)
   end
 end

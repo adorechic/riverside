@@ -103,6 +103,7 @@ class EntriesController < UIViewController
 
   def open_pinboard_controller
     pinboard_controller = PinboardController.new
+    pinboard_controller.entry = entry
     controller = UINavigationController.alloc.initWithRootViewController(
       pinboard_controller
     )

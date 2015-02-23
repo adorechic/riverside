@@ -1,4 +1,6 @@
 class PinboardController < UIViewController
+  attr_accessor :entry
+
   def viewDidLoad
     super
 
@@ -28,9 +30,11 @@ class PinboardController < UIViewController
   def add_pinboard_form
     @url = rmq.append(UITextField, :url).get
     @url.delegate = self
+    @url.text = entry['alternate'].first['href']
 
     @title = rmq.append(UITextField, :title).get
     @title.delegate = self
+    @title.text = entry['title']
 
     @tag = rmq.append(UITextField, :tag).get
     @tag.delegate = self

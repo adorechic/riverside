@@ -5,6 +5,7 @@ gem 'ruby_motion_query'
 gem 'afmotion'
 gem 'dotenv'
 gem 'cdq'
+gem 'motion-social'
 
 # cocoapods 0.36 requires ActiveSupport 4, but cdq 0.1.11 requires ActiveSupport 3.2
 # So fix the version of cocoapods

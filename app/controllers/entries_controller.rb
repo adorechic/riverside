@@ -1,6 +1,8 @@
 class EntriesController < UIViewController
   attr_accessor :feeds_controller, :entry
 
+  include MotionSocial::Sharing
+
   def viewDidLoad
     super
 
@@ -79,6 +81,15 @@ class EntriesController < UIViewController
         }
       )
     )
+    ac.addAction(
+      UIAlertAction.actionWithTitle(
+        "Twitter",
+        style: UIAlertActionStyleDefault,
+        handler: -> (action) {
+          post_to_twitter
+        }
+      )
+    )
 
     self.presentViewController(ac, animated: true, completion: nil)
   end
@@ -108,5 +119,21 @@ class EntriesController < UIViewController
       pinboard_controller
     )
     self.presentViewController(controller, animated: true, completion: nil)
+  end
+
+  def sharing_message
+    ">> #{entry['title']}"
+  end
+
+  def sharing_url
+    entry['alternate'].first['href']
+  end
+
+  def sharing_image
+    nil
+  end
+
+  def controller
+    self
   end
 end

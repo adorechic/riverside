@@ -49,7 +49,7 @@ class MainController < UIViewController
   end
 
   def show_categories(data)
-    @data = data
+    @data = data.select {|item| item["count"].to_i > 0 }
 
     @table = UITableView.alloc.initWithFrame(self.view.bounds)
     @table.dataSource = self
